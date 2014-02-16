@@ -36,6 +36,16 @@ class MinCoin
     }
 
     /**
+     * Returns whether API requests will be made using SSL
+     *
+     * @return bool
+     */
+    public function getSsl()
+    {
+        return $this->ssl;
+    }
+
+    /**
      * Sets the IHttp instance used to make API requests
      *
      * @param  IHttp $http An IHttp instance
@@ -45,6 +55,19 @@ class MinCoin
     {
         $this->http = $http;
         return $this;
+    }
+
+    /**
+     * Returns the IHttp instance used to make API requests
+     *
+     * @return IHttp
+     */
+    public function getHttp()
+    {
+        if (null === $this->http) {
+            $this->http = new Http();
+        }
+        return $this->http;
     }
 
     /**
@@ -128,8 +151,9 @@ class MinCoin
         $url  = $this->ssl ? "https://" : "http://";
         $url .= self::URL_API . $end_point;
 
-        $this->http->setUrl($url);
-        $response = $this->http->request();
+        $http = $this->getHttp();
+        $http->setUrl($url);
+        $response = $http->request();
         if ($response) {
             return json_decode($response, true);
         } else {
